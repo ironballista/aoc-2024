@@ -88,28 +88,21 @@ pub fn day_two_second() -> i64 {
         if count_inc == 0 || count_dec == 0 {
             count += 1;
         } else {
-            let errors_inc: Vec<_> = increasing.iter().enumerate().filter(|(_idx, &it)| !it).map(|(idx, _)| idx).collect();
-            let errors_dec: Vec<_> = decreasing.iter().enumerate().filter(|(_idx, &it)| !it).map(|(idx, _)| idx).collect();
-
-            for &idx in errors_inc.iter().chain(errors_dec.iter()) {
+            for idx in 0..=diffs.len() {
                 let mut copy = diffs.clone();
 
-                if idx != 0 && idx != copy.len() - 1 {
+                if idx == copy.len() { // !! Horrible Hack Alert !!
+                    copy.remove(0); // I should have worked on the input vec instead of diffs
+                } else if idx != copy.len() - 1 {
                     copy[idx+1] += copy[idx];
+                    copy.remove(idx);
+                } else {
+                    copy.remove(idx);
                 }
 
-                copy.remove(idx);
                 if evaluate(&copy.iter().cloned()) {
                     count += 1;
                     continue 'outer;
-                } else {
-                    dbg!(&line);
-                    dbg!(&diffs);
-                    dbg!(len);
-                    dbg!(&increasing);
-                    dbg!(&decreasing);
-                    dbg!(&copy);
-                    eprintln!();
                 }
             }
         }
