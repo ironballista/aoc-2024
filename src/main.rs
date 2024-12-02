@@ -1,5 +1,5 @@
-use aud_aoc_2024::day_one_first;
+use aud_aoc_2024::*;
 
 fn main() {
-    println!("{}", day_one_first());
+    println!("{}", day_one_second());
 }
