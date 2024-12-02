@@ -1,3 +1,5 @@
+#![feature(iter_map_windows)]
+
 use std::io::stdin;
 
 pub fn test() -> String {
@@ -38,4 +40,24 @@ pub fn day_one_second() -> u64 {
             .count() as u64
         )
         .sum()
+}
+
+pub fn day_two_first() -> i64 {
+    let mut count = 0;
+
+    for line in stdin().lines().map(Result::unwrap) {
+        let diffs: Vec<_> = line
+            .split_whitespace()
+            .map(str::parse::<i64>)
+            .map(Result::unwrap)
+            .map_windows(|[l, r]| l - r)
+            .collect();
+
+        if diffs.iter().all(|diff| (-3..0).contains(diff))
+            || diffs.iter().all(|diff| (1..=3).contains(diff)) {
+            count += 1;
+        }
+    }
+
+    count
 }
