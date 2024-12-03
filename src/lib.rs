@@ -125,3 +125,26 @@ pub fn day_three_first() -> i64 {
 
     result
 }
+
+pub fn day_three_second() -> i64 {
+    let re = Regex::new(r"do\(()()\)|don't\(()()\)|mul\((\d{1,3}),(\d{1,3})\)").unwrap();
+    let mut result: i64 = 0;
+    let mut enabled = true;
+
+    for line in stdin().lines().map(Result::unwrap) {
+        for (m, [x, y]) in re.captures_iter(&line).map(|m| m.extract()) {
+            match &m[..3] {
+                "do(" => enabled = true,
+                "don" => enabled = false,
+                "mul" if enabled => {
+                    let (x, y): (i64, i64) = (x.parse().unwrap(), y.parse().unwrap());
+                    result += x * y;
+                }
+                _ => (),
+            }
+        }
+    }
+
+    result
+}
+
