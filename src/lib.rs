@@ -1,6 +1,7 @@
 #![feature(iter_map_windows)]
 
 use std::io::stdin;
+use regex::Regex;
 
 pub fn test() -> String {
     String::from("Hello World!")
@@ -109,4 +110,18 @@ pub fn day_two_second() -> i64 {
     }
 
     count
+}
+
+pub fn day_three_first() -> i64 {
+    let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
+    let mut result: i64 = 0;
+
+    for line in stdin().lines().map(Result::unwrap) {
+        for (_, [x, y]) in re.captures_iter(&line).map(|m| m.extract()) {
+            let (x, y): (i64, i64) = (x.parse().unwrap(), y.parse().unwrap());
+            result += x * y;
+        }
+    }
+
+    result
 }
