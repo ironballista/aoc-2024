@@ -209,3 +209,37 @@ pub fn day_four_first() -> i64 {
 
     count
 }
+
+pub fn day_four_second() -> i64 {
+    let text: Vec<_> = stdin().lines().map(Result::unwrap).collect();
+
+    fn get_main_diagonal(text: &Vec<String>, row: usize, col: usize) -> Option<String> {
+        const LEN: usize = 3;
+
+        (0..LEN)
+            .map(|idx| Some(text.get(row + idx)?.chars().nth(col + idx)?))
+            .try_collect()
+    }
+
+    fn get_secondary_diagonal(text: &Vec<String>, row: usize, col: usize) -> Option<String> {
+        const LEN: usize = 3;
+
+        (0..LEN)
+            .map(|idx| Some(text.get(row + idx)?.chars().nth(col.checked_sub(idx)?)?))
+            .try_collect()
+    }
+
+    let (height, width) = (text.len(), text[0].len());
+
+    let mut count = 0;
+    for row in 0..height {
+        for col in 0..width {
+            if get_main_diagonal(&text, row, col).is_some_and(|s| s == "MAS" || s == "SAM")
+                && get_secondary_diagonal(&text, row, col + 2).is_some_and(|s| s == "MAS" || s == "SAM") {
+                count += 1;
+            }
+        }
+    }
+
+    count
+}
