@@ -1,4 +1,5 @@
 #![feature(iter_map_windows)]
+#![feature(iterator_try_collect)]
 
 use std::io::stdin;
 use regex::Regex;
@@ -148,3 +149,63 @@ pub fn day_three_second() -> i64 {
     result
 }
 
+pub fn day_four_first() -> i64 {
+    let text: Vec<_> = stdin().lines().map(Result::unwrap).collect();
+
+    fn get_main_diagonal(text: &Vec<String>, row: usize, col: usize) -> Option<String> {
+        const LEN: usize = 4;
+
+        (0..LEN)
+            .map(|idx| Some(text.get(row + idx)?.chars().nth(col + idx)?))
+            .try_collect()
+    }
+
+    fn get_secondary_diagonal(text: &Vec<String>, row: usize, col: usize) -> Option<String> {
+        const LEN: usize = 4;
+
+        (0..LEN)
+            .map(|idx| Some(text.get(row + idx)?.chars().nth(col.checked_sub(idx)?)?))
+            .try_collect()
+    }
+
+    fn get_horizontal(text: &Vec<String>, row: usize, col: usize) -> Option<String> {
+        const LEN: usize = 4;
+
+        (0..LEN)
+            .map(|idx| Some(text.get(row)?.chars().nth(col + idx)?))
+            .try_collect()
+    }
+
+    fn get_vertical(text: &Vec<String>, row: usize, col: usize) -> Option<String> {
+        const LEN: usize = 4;
+
+        (0..LEN)
+            .map(|idx| Some(text.get(row + idx)?.chars().nth(col)?))
+            .try_collect()
+    }
+
+    let (height, width) = (text.len(), text[0].len());
+
+    let mut count = 0;
+    for row in 0..height {
+        for col in 0..width {
+            if get_horizontal(&text, row, col).is_some_and(|s| s == "XMAS" || s == "SAMX") {
+                count += 1;
+            }
+
+            if get_vertical(&text, row, col).is_some_and(|s| s == "XMAS" || s == "SAMX") {
+                count += 1;
+            }
+
+            if get_main_diagonal(&text, row, col).is_some_and(|s| s == "XMAS" || s == "SAMX") {
+                count += 1;
+            }
+
+            if get_secondary_diagonal(&text, row, col).is_some_and(|s| s == "XMAS" || s == "SAMX") {
+                count += 1;
+            }
+        }
+    }
+
+    count
+}
